@@ -4,17 +4,37 @@ import numpy as np
 import math
 
 pythia = pythia8.Pythia()
+
+import pythia8
+
+pythia = pythia8.Pythia()
+
+# Enable SoftQCD non-diffractive processes
 pythia.readString("SoftQCD:nonDiffractive = on")
-pythia.readString("9900022:new = gamma_dark DarkPhoton")
-pythia.readString("9900022:spinType = 1")
-pythia.readString("9900022:chargeType = 0")
-pythia.readString("9900022:colType = 0")
-pythia.readString("9900022:m0 = 1e-20")
-pythia.readString("9900022:isResonance = false")
-pythia.readString("111:addChannel = 1 0.000001 101 22 9900022")
+
+# Define the dark photon properties
+pythia.readString("9900022:new = gamma_dark DarkPhoton")  # Define new particle
+pythia.readString("9900022:spinType = 1")                 # Spin-1 particle (vector boson)
+pythia.readString("9900022:chargeType = 0")               # Neutral particle
+pythia.readString("9900022:colType = 0")                  # Not colored
+pythia.readString("9900022:m0 = 0.002")                   # Set mass to 2 MeV (above 1 MeV)
+pythia.readString("9900022:tau0 = 0")                     # Zero lifetime, decays immediately
+pythia.readString("9900022:mayDecay = on")                # Allow dark photon to decay
+pythia.readString("9900022:isResonance = false")          # Not treated as a resonance
+
+# Add a decay channel for the dark photon
+# Decay channel: gamma_dark -> e+ e- with 100% probability
+pythia.readString("9900022:addChannel = 1 1.0 0 11 -11")  # 100% decay to e+ e-
+
+# Optional: add dark photon production channels
+pythia.readString("111:addChannel = 1 0.000001 0 22 9900022")  # pi0 -> gamma gamma_dark
+pythia.readString("221:addChannel = 1 0.000001 0 22 9900022")  # eta -> gamma gamma_dark
+pythia.readString("333:addChannel = 1 0.000001 0 221 9900022") # phi -> eta gamma_dark
+
+# Initialize Pythia
 pythia.init()
 
-events_num = 500000
+events_num = 10000
 events = []
 dark_photon_events = []
 
@@ -52,14 +72,15 @@ for i_event in range(events_num):
             sphericity_tensor += np.outer(p, p) / np.dot(p, p)
 
             # Jets (quarks or gluons)
-            if particle.isHadron() and particle.pT() > 20:
+            if particle.isHadron() and particle.isFinal():
                 jets.append(particle)
                 jet_multiplicity += 1
 
             # Leptons (electron or muon)
-            if particle.idAbs() in [11, 13] and particle.pT() > 10:
+            if particle.idAbs() == 11 and particle.isFinal():  # Electron or positron
                 leptons.append(particle)
                 lepton_multiplicity += 1
+
 
         # Missing Energy (MET)
         if particle.isFinal() and particle.idAbs() in [12, 14, 16, 9900022]:
@@ -68,6 +89,7 @@ for i_event in range(events_num):
 
         # Detect if Dark Photon was produced
         if particle.id() == 9900022:
+            print("Dark Photon produced!")
             dark_photon_produced = True
 
     # MET and delta_phi calculation using NumPy
