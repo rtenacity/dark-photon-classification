@@ -22,14 +22,8 @@ pythia.readString("9900022:tau0 = 0")                     # Zero lifetime, decay
 pythia.readString("9900022:mayDecay = on")                # Allow dark photon to decay
 pythia.readString("9900022:isResonance = false")          # Not treated as a resonance
 
-# Add a decay channel for the dark photon
-# Decay channel: gamma_dark -> e+ e- with 100% probability
-pythia.readString("9900022:addChannel = 1 1.0 0 11 -11")  # 100% decay to e+ e-
-
 # Optional: add dark photon production channels
 pythia.readString("111:addChannel = 1 0.000001 0 22 9900022")  # pi0 -> gamma gamma_dark
-pythia.readString("221:addChannel = 1 0.000001 0 22 9900022")  # eta -> gamma gamma_dark
-pythia.readString("333:addChannel = 1 0.000001 0 221 9900022") # phi -> eta gamma_dark
 
 # Initialize Pythia
 pythia.init()
