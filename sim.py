@@ -21,9 +21,11 @@ pythia.readString("9900022:m0 = 0.002")                   # Set mass to 2 MeV (a
 pythia.readString("9900022:tau0 = 0")                     # Zero lifetime, decays immediately
 pythia.readString("9900022:mayDecay = on")                # Allow dark photon to decay
 pythia.readString("9900022:isResonance = false")          # Not treated as a resonance
+pythia.readString("9900022:addChannel = 1 1.0 0 11 -11")  # Dark photon -> e+ e-
 
-# Optional: add dark photon production channels
+# Add dark photon production channels
 pythia.readString("111:addChannel = 1 0.000001 0 22 9900022")  # pi0 -> gamma gamma_dark
+
 
 # Initialize Pythia
 pythia.init()
@@ -160,7 +162,7 @@ for data_point in dark_photon_events:
 df_events = pd.DataFrame(events)
 
 # Save to CSV file
-csv_file_path = "data/sim_with_razor_extended_final.csv"
+csv_file_path = "data/sim_with_razor_extended.csv"
 try:
     with open(csv_file_path, "a") as f:
         df_events.to_csv(f, header=f.tell() == 0, index=False)
