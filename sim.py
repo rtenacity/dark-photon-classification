@@ -30,7 +30,7 @@ pythia.readString("111:addChannel = 1 0.000001 0 22 9900022")  # pi0 -> gamma ga
 # Initialize Pythia
 pythia.init()
 
-events_num = 500000
+events_num = 10000
 events = []
 dark_photon_events = []
 
@@ -68,12 +68,12 @@ for i_event in range(events_num):
             sphericity_tensor += np.outer(p, p) / np.dot(p, p)
 
             # Jets (quarks or gluons)
-            if particle.isHadron() and particle.isFinal() and particle.pT() > 20.0:
+            if particle.isHadron() and particle.isFinal() and particle.pT() > 0.1:
                 jets.append(particle)
                 jet_multiplicity += 1
 
             # Leptons (electron or muon)
-            if particle.idAbs() == 11 and particle.isFinal() and particle.pT() > 10.0:  # Electron or positron
+            if particle.idAbs() == 11 and particle.isFinal() and particle.pT() > 0.005:  # Electron or positron
                 leptons.append(particle)
                 lepton_multiplicity += 1
 
@@ -162,7 +162,7 @@ for data_point in dark_photon_events:
 df_events = pd.DataFrame(events)
 
 # Save to CSV file
-csv_file_path = "data/sim_with_razor_extended.csv"
+csv_file_path = "data/sim_with_razor_extended2.csv"
 try:
     with open(csv_file_path, "a") as f:
         df_events.to_csv(f, header=f.tell() == 0, index=False)
