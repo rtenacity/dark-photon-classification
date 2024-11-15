@@ -20,7 +20,6 @@ pythia.readString("9900022:addChannel = 1 1.0 0 11 -11")  # Dark photon -> e+ e-
 
 pythia.readString("111:addChannel = 1 0.000001 0 22 9900022")  # pi0 -> gamma gamma_dark
 
-
 pythia.init()
 
 events_num = 10000
@@ -112,14 +111,4 @@ for i_event in range(events_num):
     }
     events.append(event_data)
 
-# Convert to DataFrame
-df_events = pd.DataFrame(events)
 
-# Save to CSV file
-csv_file_path = "data/isolation_and_dark_photon.csv"
-df_events.to_csv(csv_file_path, index=False)
-
-correlation_matrix = df_events.corr()
-correlations_with_target = correlation_matrix['Dark Photon Produced'].drop('Dark Photon Produced')
-sorted_correlations = correlations_with_target.abs().sort_values(ascending=False)
-print(sorted_correlations)
